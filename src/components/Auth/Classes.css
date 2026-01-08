@@ -1,0 +1,74 @@
+/* Page */
+.classes-page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #f4f8ff, #ffffff);
+  padding: 30px 20px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Title */
+.classes-title {
+  font-size: 28px;
+  color: #1e5ed6;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+/* Grid */
+.classes-grid {
+  width: 100%;
+  max-width: 900px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* Card */
+.class-card {
+  background: white;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.class-card h3 {
+  margin: 0;
+  color: #1e5ed6;
+  font-size: 20px;
+}
+
+.class-card p {
+  margin-top: 8px;
+  color: #555;
+  font-size: 15px;
+}
+
+.class-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+/* College section */
+.college-section {
+  margin-top: auto;
+  text-align: center;
+  padding-top: 50px;
+}
+
+.college-logo {
+  width: 90px;
+  margin-bottom: 8px;
+}
+
+.college-name {
+  font-weight: 600;
+  color: #1e5ed6;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}

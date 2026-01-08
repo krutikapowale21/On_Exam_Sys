@@ -1,0 +1,74 @@
+.student-home-container {
+  text-align: center;
+  background: #f5f7fa;
+  min-height: 100vh;
+  padding-top: 40px;
+}
+
+/* Title */
+.student-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1a73e8;
+  margin-bottom: 50px;
+}
+
+/* Cards Wrapper */
+.card-section {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 60px;
+}
+
+/* Single Card */
+.home-card {
+  width: 260px;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #000;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  transition: 0.3s ease;
+}
+
+.home-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+/* Icon */
+.card-icon {
+  font-size: 35px;
+  color: #1a73e8;
+  margin-bottom: 12px;
+}
+
+/* Text inside card */
+.home-card h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.home-card p {
+  color: #555;
+  font-size: 14px;
+}
+
+/* Logo Section */
+.logo-container {
+  margin-top: 20px;
+}
+
+.college-logo {
+  width: 110px;
+  margin-bottom: 5px;
+}
+
+.college-text {
+  font-weight: bold;
+  font-size: 18px;
+  color: #1a73e8;
+}
