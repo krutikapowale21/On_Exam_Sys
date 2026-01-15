@@ -1,133 +1,154 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./AttemptExamPage.css";
 
 function AttemptExamPage() {
   const { examId } = useParams();
   const navigate = useNavigate();
+  const checked = useRef(false);
 
-  const student = JSON.parse(localStorage.getItem("student")); // logged student
-
-
-  const [exam, setExam] = useState(null);
   const [questions, setQuestions] = useState([]);
-  const [selectedAnswers, setSelectedAnswers] = useState({});
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState({});
 
-  /* ========================
-     FETCH EXAM + QUESTIONS
-  ======================== */
+  /* 🔐 INSTRUCTION CHECK */
   useEffect(() => {
-    const fetchData = async () => {
-      const examRes = await fetch(
-        `http://localhost:5000/api/exams/${examId}`
-      );
-      const examData = await examRes.json();
-      setExam(examData);
+    if (checked.current) return;
 
-      setTimeLeft(examData.duration * 60); // minutes → seconds
-
-      const qRes = await fetch(
-        `http://localhost:5000/api/questions/${examId}`
-      );
-      const qData = await qRes.json();
-      setQuestions(qData);
-    };
-
-    fetchData();
-  }, [examId]);
-
-  /* ========================
-     TIMER LOGIC
-  ======================== */
-  useEffect(() => {
-    if (timeLeft <= 0 && !submitted) {
-      handleSubmitExam(); // AUTO SUBMIT
-      return;
+    const accepted = localStorage.getItem("instructionAccepted");
+    if (accepted !== examId) {
+      navigate("/attempt-exams");
     }
 
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
+    checked.current = true;
+  }, [examId, navigate]);
 
-    return () => clearInterval(timer);
-  }, [timeLeft]);
-
-  /* ========================
-     HANDLE ANSWER
-  ======================== */
-  const handleOptionChange = (qid, option) => {
-    setSelectedAnswers({ ...selectedAnswers, [qid]: option });
-  };
-
-  /* ========================
-     SUBMIT EXAM
-  ======================== */
-  const handleSubmitExam = async () => {
-    if (submitted) return;
-    setSubmitted(true);
-
-    const payload = {
-      studentId: student._id,
-      examId,
-      answers: Object.keys(selectedAnswers).map((qid) => ({
-        questionId: qid,
-        selected: selectedAnswers[qid],
-      })),
+  /* 📥 FETCH QUESTIONS */
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/questions/${examId}`
+        );
+        const data = await res.json();
+        setQuestions(data);
+      } catch (err) {
+        console.log(err);
+        alert("Failed to load questions");
+        navigate("/attempt-exams");
+      }
     };
 
-    await fetch("http://localhost:5000/api/results/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    fetchQuestions();
+  }, [examId, navigate]);
 
-    alert("Exam Submitted");
-    navigate("/student-results");
+  /* 📝 SELECT ANSWER */
+  const handleSelect = (qid, option) => {
+    setAnswers((prev) => ({
+      ...prev,
+      [qid]: option,
+    }));
   };
 
-  /* ========================
-     FORMAT TIMER
-  ======================== */
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
+  /* ⏮ ⏭ Navigation */
+  const prevQuestion = () => {
+    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
+  };
 
-  if (!exam) return <p>Loading...</p>;
+  const nextQuestion = () => {
+    if (currentIndex < questions.length - 1)
+      setCurrentIndex(currentIndex + 1);
+  };
+
+  /* ✅ SUBMIT */
+  const submitExam = () => {
+    localStorage.removeItem("instructionAccepted");
+    alert("Exam submitted successfully");
+    navigate("/StudentHome");
+  };
+
+  if (questions.length === 0) {
+    return <p style={{ textAlign: "center" }}>Loading questions...</p>;
+  }
+
+  const currentQuestion = questions[currentIndex];
 
   return (
     <div className="attempt-exam-page">
-      <h2>{exam.examName}</h2>
+      <h2 className="exam-title">Online Examination</h2>
 
-      <div className="timer">
-        ⏳ Time Left: {minutes}:{seconds < 10 ? "0" : ""}
-        {seconds}
-      </div>
-
-      {questions.map((q, index) => (
-        <div key={q._id} className="question-box">
+      {/* ================= QUESTION AREA ================= */}
+      <div className="question-section">
+        <div className="question-box">
           <p>
-            <b>Q{index + 1}.</b> {q.questionText}
+            <b>Q{currentIndex + 1}.</b> {currentQuestion.questionText}
           </p>
 
-          {q.options.map((op, i) => (
+          {currentQuestion.options.map((op, i) => (
             <label key={i} className="option">
               <input
                 type="radio"
-                name={q._id}
-                value={op}
-                checked={selectedAnswers[q._id] === op}
-                onChange={() => handleOptionChange(q._id, op)}
+                name={currentQuestion._id}
+                checked={answers[currentQuestion._id] === op}
+                onChange={() =>
+                  handleSelect(currentQuestion._id, op)
+                }
               />
               {op}
             </label>
           ))}
         </div>
-      ))}
 
-      <button className="submit-btn" onClick={handleSubmitExam}>
-        Submit Exam
-      </button>
+        {/* ================= NAVIGATION ================= */}
+        <div className="nav-btns">
+          <div className="nav-left">
+            <button
+              className="prev-btn"
+              disabled={currentIndex === 0}
+              onClick={prevQuestion}
+            >
+              Previous
+            </button>
+
+            <button
+              className="next-btn"
+              disabled={currentIndex === questions.length - 1}
+              onClick={nextQuestion}
+            >
+              Next
+            </button>
+          </div>
+
+          <div className="nav-right">
+            <button className="submit-btn" onClick={submitExam}>
+              Submit Exam
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ================= QUESTION PALETTE ================= */}
+      <div className="palette-section">
+        <h4 className="palette-title">Questions</h4>
+
+        <div className="question-palette">
+          {questions.map((q, index) => {
+            const attempted = answers[q._id];
+
+            return (
+              <div
+                key={q._id}
+                onClick={() => setCurrentIndex(index)}
+                className={`palette-box 
+                  ${attempted ? "attempted" : "not-attempted"} 
+                  ${currentIndex === index ? "active" : ""}`}
+              >
+                {index + 1}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

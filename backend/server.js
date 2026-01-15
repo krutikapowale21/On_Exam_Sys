@@ -16,6 +16,7 @@ app.use("/api", require("./routes/teacherRoutes")); // 👈 LOGIN
 app.use("/api", require("./routes/studentAuthRoutes"));
 
 
+
 // MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
