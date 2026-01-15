@@ -33,7 +33,7 @@ function Classes() {
           >
             <h3>{cls.className}</h3>
             <p>
-              <b>Subject:</b> {cls.subject}
+              <b>Branch:</b> {cls.branch }
             </p>
             <p>
               <b>Semester:</b> {cls.semester}

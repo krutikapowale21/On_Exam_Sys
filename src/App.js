@@ -17,7 +17,7 @@ import AddQuestion from "./components/Auth/AddQuestion";
 import EditExam from "./components/Auth/EditExam";
 import AttemptExam from "./components/Auth/AttemptExam";
 import AttemptExamPage from "./components/Auth/AttemptExamPage";
-import StudentResults from "./components/Auth/StudentResults";
+import StudentResult from "./components/Auth/StudentResult";
 import StudentClassLogin from "./components/Auth/StudentClassLogin";
 import JoinClass from "./components/Auth/JoinClass";
 
@@ -40,7 +40,7 @@ function App() {
         <Route path="/edit-exam/:id" element={<EditExam />} />
         <Route path="/attempt-exams" element={<AttemptExam />} />
         <Route path="/attempt-exam/:examId" element={<AttemptExamPage />} />
-        <Route path="/student-results" element={<StudentResults />} />
+        <Route path="/student-result/:resultId" element={<StudentResult />} />
         <Route path="/class-login/:classCode" element={<StudentClassLogin />} />
         <Route path="/join-class/:classId" element={<JoinClass />} />
       </Routes>
