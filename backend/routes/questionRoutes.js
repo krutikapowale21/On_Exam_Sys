@@ -1,49 +1,33 @@
 const express = require("express");
 const router = express.Router();
 const Question = require("../models/Question");
-const Exam = require("../models/Exam");
 
-// ADD QUESTION
+/* ======================
+   ADD QUESTION
+====================== */
 router.post("/questions", async (req, res) => {
   try {
-    const { examId } = req.body;
-
-    const exam = await Exam.findById(examId);
-    if (!exam) return res.status(404).json({ message: "Exam not found" });
-
-    const count = await Question.countDocuments({ examId });
-
-    if (count >= exam.totalQuestions) {
-      return res.status(400).json({
-        message: `Only ${exam.totalQuestions} questions allowed`,
-      });
-    }
-
     const question = new Question(req.body);
     await question.save();
-
-    res.json({ success: true });
+    res.json(question);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: err.message });
   }
 });
 
-// GET QUESTIONS BY EXAM
+/* ======================
+   GET QUESTIONS BY EXAM
+====================== */
 router.get("/questions/:examId", async (req, res) => {
-  const questions = await Question.find({ examId: req.params.examId });
-  res.json(questions);
-});
+  try {
+    const questions = await Question.find({
+      examId: req.params.examId,
+    });
 
-// UPDATE QUESTION
-router.put("/questions/:id", async (req, res) => {
-  await Question.findByIdAndUpdate(req.params.id, req.body);
-  res.json({ success: true });
-});
-
-// DELETE QUESTION
-router.delete("/questions/:id", async (req, res) => {
-  await Question.findByIdAndDelete(req.params.id);
-  res.json({ success: true });
+    res.json(questions);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;

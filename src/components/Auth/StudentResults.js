@@ -1,28 +1,39 @@
 import React, { useEffect, useState } from "react";
-import "./StudentResults.css";
 
 function StudentResults() {
   const [results, setResults] = useState([]);
   const student = JSON.parse(localStorage.getItem("student"));
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/results/student/${student._id}`)
-      .then(res => res.json())
-      .then(data => setResults(data));
+    if (!student || !student._id) {
+      alert("Please login again");
+      return;
+    }
+
+    fetch(
+      `http://localhost:5000/api/results/student/${student._id}`
+    )
+      .then((res) => res.json())
+      .then((data) => setResults(data))
+      .catch((err) => console.log(err));
   }, []);
 
   return (
-    <div className="result-page">
+    <div>
       <h2>My Results</h2>
 
-      {results.map(r => (
-        <div className="result-card" key={r._id}>
-          <h3>{r.examId.examName}</h3>
-          <p><b>Subject:</b> {r.examId.subject}</p>
-          <p><b>Score:</b> {r.score} / {r.totalMarks}</p>
-          <p><b>Percentage:</b> {r.percentage.toFixed(2)}%</p>
-        </div>
-      ))}
+      {results.length === 0 ? (
+        <p>No results found</p>
+      ) : (
+        results.map((r, index) => (
+          <div key={index}>
+            <p><b>Exam:</b> {r.examName}</p>
+            <p><b>Marks:</b> {r.marks}</p>
+            <p><b>Result:</b> {r.result}</p>
+            <hr />
+          </div>
+        ))
+      )}
     </div>
   );
 }
