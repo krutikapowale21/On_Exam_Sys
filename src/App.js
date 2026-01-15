@@ -13,7 +13,7 @@ import CreateClass from "./components/Auth/CreateClass";
 import Classes from "./components/Auth/Classes";
 import ViewClass from "./components/Auth/ViewClass";
 import JoinClass from "./components/Auth/JoinClass";
-import StudentClassLogin from "./components/Auth/StudentClassLogin";
+// import StudentClassLogin from "./components/Auth/StudentClassLogin";
 
 import CreateExam from "./components/Auth/CreateExam";
 import Exams from "./components/Auth/Exams";
@@ -23,10 +23,10 @@ import EditExam from "./components/Auth/EditExam";
 import AttemptExam from "./components/Auth/AttemptExam";
 import ExamInstructions from "./components/Auth/ExamInstructions";
 import AttemptExamPage from "./components/Auth/AttemptExamPage";
-import StudentResult from "./components/Auth/StudentResult";
+// import StudentResult from "./components/Auth/StudentResult";
 import StudentClassLogin from "./components/Auth/StudentClassLogin";
-import JoinClass from "./components/Auth/JoinClass";
-import StudentResults from "./components/Auth/StudentResults";
+// import JoinClass from "./components/Auth/JoinClass";
+// import StudentResults from "./components/Auth/StudentResults";
 
 function App() {
   return (
@@ -45,7 +45,7 @@ function App() {
         <Route path="/CreateClass" element={<CreateClass />} />
         <Route path="/Classes" element={<Classes />} />
         <Route path="/class/:id" element={<ViewClass />} />
-        <Route path="/join-class/:classId" element={<JoinClass />} />
+        {/* <Route path="/join-class/:classId" element={<JoinClass />} /> */}
         <Route path="/class-login/:classCode" element={<StudentClassLogin />} />
 
         {/* TEACHER EXAM */}
@@ -58,12 +58,12 @@ function App() {
         <Route path="/attempt-exams" element={<AttemptExam />} />
         <Route path="/exam-instructions/:examId" element={<ExamInstructions />} />
         <Route path="/attempt-exam/:examId" element={<AttemptExamPage />} />
-        <Route path="/student-result/:resultId" element={<StudentResult />} />
+        {/* <Route path="/student-result/:resultId" element={<StudentResult />} /> */}
         <Route path="/class-login/:classCode" element={<StudentClassLogin />} />
         <Route path="/join-class/:classId" element={<JoinClass />} />
 
         {/* RESULT */}
-        <Route path="/student-results" element={<StudentResults />} />
+        {/* <Route path="/student-results" element={<StudentResults />} /> */}
       </Routes>
     </BrowserRouter>
   );
