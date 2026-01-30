@@ -1,0 +1,100 @@
+.instruction-page {
+  max-width: 600px;
+  margin: auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 10px;
+}
+
+.instruction-list li {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.start-btn {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* PAGE CONTAINER */
+.instruction-page {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* TITLE */
+.instruction-page h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #1f2937;
+}
+
+/* INSTRUCTION LIST */
+.instruction-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-bottom: 25px;
+}
+
+.instruction-list li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+  color: #374151;
+  font-size: 15px;
+}
+
+/* AGREEMENT BOX */
+.agree-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+  font-size: 14px;
+  color: #111827;
+}
+
+.agree-box input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* START BUTTON */
+.start-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: #22c55e; /* GREEN */
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.1s ease;
+}
+
+/* HOVER EFFECT */
+.start-btn:hover {
+  background-color: #16a34a;
+}
+
+/* DISABLED STATE */
+.start-btn:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* BUTTON PRESS */
+.start-btn:active {
+  transform: scale(0.98);
+}

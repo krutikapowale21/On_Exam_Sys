@@ -156,4 +156,42 @@ router.get("/exams/student/:classId", async (req, res) => {
   }
 });
 
+// ===============================
+// TEACHER DASHBOARD – EXAM STATUS
+// ===============================
+router.get("/dashboard/exams", async (req, res) => {
+  try {
+    const exams = await Exam.find()
+      .populate("classId", "className branch semester year")
+      .sort({ examDate: 1 });
+
+    const now = new Date();
+
+    const examsWithStatus = exams.map((exam) => {
+      const start = new Date(exam.examDate);
+      const end = new Date(start.getTime() + exam.duration * 60000);
+
+      let status = "UPCOMING";
+
+      if (now >= start && now <= end) {
+        status = "LIVE";
+      } else if (now > end) {
+        status = "ENDED";
+      }
+
+      return {
+        ...exam._doc,
+        status,
+      };
+    });
+
+    res.json(examsWithStatus);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
+
 module.exports = router;

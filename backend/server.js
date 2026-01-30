@@ -11,9 +11,9 @@ app.use(express.json());
 app.use("/api", require("./routes/classRoutes"));
 app.use("/api", require("./routes/examRoutes"));
 app.use("/api", require("./routes/questionRoutes"));
-app.use("/api/results", require("./routes/resultRoutes"));
-app.use("/api", require("./routes/teacherRoutes")); // 👈 LOGIN
+app.use("/api", require("./routes/teacherRoutes")); 
 app.use("/api", require("./routes/studentAuthRoutes"));
+app.use("/api/results", require("./routes/resultRoutes"));
 
 
 // MongoDB

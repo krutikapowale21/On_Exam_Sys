@@ -7,9 +7,9 @@ const Class = require("../models/Class");
 // ==============================
 router.post("/classes", async (req, res) => {
   try {
-    const { className, subject, semester, branch, year } = req.body;
+    const { className, semester, branch, year } = req.body;
 
-    if (!className || !subject || !semester || !branch || !year) {
+    if (!className || !semester || !branch || !year) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -18,7 +18,6 @@ router.post("/classes", async (req, res) => {
 
     const newClass = new Class({
       className,
-      subject,
       semester,
       branch,
       year,

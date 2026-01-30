@@ -1,64 +1,83 @@
 const express = require("express");
 const router = express.Router();
 const Result = require("../models/Result");
-const Question = require("../models/Question");
 const Exam = require("../models/Exam");
 
-/* ==========================
-   SUBMIT EXAM
-========================== */
+/* =========================
+   SUBMIT RESULT (STUDENT)
+========================= */
 router.post("/submit", async (req, res) => {
   try {
     const { studentId, examId, answers } = req.body;
 
-    const exam = await Exam.findById(examId);
-    const questions = await Question.find({ examId });
-
-    let score = 0;
-    let resultAnswers = [];
-
-    questions.forEach((q) => {
-      const given = answers.find(a => a.questionId === q._id.toString());
-
-      const isCorrect = given && given.selected === q.correctAnswer;
-
-      if (isCorrect) score += exam.totalMarks / exam.totalQuestions;
-
-      resultAnswers.push({
-        questionId: q._id,
-        selected: given?.selected || "",
-        correct: q.correctAnswer,
-        isCorrect,
-      });
-    });
-
-    const percentage = (score / exam.totalMarks) * 100;
+    // ⚠️ TEMP logic (later improve)
+    const totalMarks = answers.length;
+    const marks = totalMarks;
+    const percentage = (marks / totalMarks) * 100;
+    const resultStatus = percentage >= 40 ? "Pass" : "Fail";
 
     const result = new Result({
       studentId,
       examId,
-      answers: resultAnswers,
-      score,
-      totalMarks: exam.totalMarks,
+      marks,
       percentage,
+      result: resultStatus,
     });
 
     await result.save();
 
-    res.json({ success: true, result });
+    res.json({
+      success: true,
+      resultId: result._id,
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: err.message });
   }
 });
 
-/* ==========================
-   GET STUDENT RESULT
-========================== */
-router.get("/student/:studentId", async (req, res) => {
-  const results = await Result.find({ studentId: req.params.studentId })
-    .populate("examId", "examName subject");
+/* ===============================
+   ✅ TEACHER VIEW RESULT BY EXAM
+   Rank + Pass/Fail
+================================ */
+router.get("/exam/:examId", async (req, res) => {
+  try {
+    const { examId } = req.params;
 
-  res.json(results);
+    const exam = await Exam.findById(examId);
+    if (!exam) {
+      return res.status(404).json({ message: "Exam not found" });
+    }
+
+    // 🔥 Sort by marks (high → low)
+    const results = await Result.find({ examId })
+      .populate("studentId", "name enrollment rollNo")
+      .sort({ marks: -1 });
+
+    // 🔥 ADD RANK
+    const rankedResults = results.map((r, index) => ({
+      rollNo: r.studentId.rollNo,
+      enrollment: r.studentId.enrollment,
+      name: r.studentId.name,
+      marks: r.marks,
+      percentage: r.percentage,
+      result: r.result,
+      rank: index + 1,
+    }));
+
+    res.json({
+      exam: {
+        examName: exam.examName,
+        subject: exam.subject,
+        subCode: exam.subCode,
+        branch: exam.branch,
+        semester: exam.semester,
+        totalMarks: exam.totalMarks,
+      },
+      results: rankedResults,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;

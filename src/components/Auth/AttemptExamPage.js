@@ -1,74 +1,67 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./AttemptExamPage.css";
 
 function AttemptExamPage() {
   const { examId } = useParams();
   const navigate = useNavigate();
+  const checked = useRef(false);
 
-  const student = JSON.parse(localStorage.getItem("student"));
-
-  const [exam, setExam] = useState(null);
   const [questions, setQuestions] = useState([]);
-  const [selectedAnswers, setSelectedAnswers] = useState({});
-  const [timeLeft, setTimeLeft] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState({});
+
+  /* ⏳ TIMER STATES */
+  const [timeLeft, setTimeLeft] = useState(0);
   const [submitted, setSubmitted] = useState(false);
 
-  /* ========================
-     AUTH CHECK
-  ======================== */
+  /* 🔐 INSTRUCTION CHECK */
   useEffect(() => {
-    if (!student) {
-      alert("Please login again");
-      navigate("/student-login");
-    }
-  }, []);
+    if (checked.current) return;
 
-  /* ========================
-     FETCH EXAM + QUESTIONS
-  ======================== */
+    const accepted = localStorage.getItem("instructionAccepted");
+    if (accepted !== examId) {
+      navigate("/attempt-exams");
+    }
+
+    checked.current = true;
+  }, [examId, navigate]);
+
+  /* 📥 FETCH QUESTIONS + SET TIMER */
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchQuestions = async () => {
       try {
-        // 🔥 GET ALL EXAMS & FIND ONE (safe)
+        // 🔥 get exam to read duration
         const examRes = await fetch("http://localhost:5000/api/exams");
         const exams = await examRes.json();
-        const foundExam = exams.find((e) => e._id === examId);
+        const exam = exams.find((e) => e._id === examId);
 
-        if (!foundExam) {
+        if (!exam) {
           alert("Exam not found");
-          navigate("/student-home");
+          navigate("/attempt-exams");
           return;
         }
 
-        setExam(foundExam);
-        setTimeLeft(foundExam.duration * 60);
+        setTimeLeft(exam.duration * 60); // minutes → seconds
 
-        // QUESTIONS
-        const qRes = await fetch(
+        const res = await fetch(
           `http://localhost:5000/api/questions/${examId}`
         );
-        const qData = await qRes.json();
-        setQuestions(qData);
+        const data = await res.json();
+        setQuestions(data);
       } catch (err) {
-        console.error(err);
-        alert("Error loading exam");
+        console.log(err);
+        alert("Failed to load exam");
+        navigate("/attempt-exams");
       }
     };
 
-    fetchData();
-  }, [examId]);
+    fetchQuestions();
+  }, [examId, navigate]);
 
-  /* ========================
-     TIMER
-  ======================== */
+  /* ⏳ TIMER LOGIC */
   useEffect(() => {
-    if (timeLeft === null || submitted) return;
-
-    if (timeLeft <= 0) {
-      handleSubmitExam(); // AUTO SUBMIT
-      return;
-    }
+    if (timeLeft <= 0 || submitted) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => prev - 1);
@@ -77,92 +70,118 @@ function AttemptExamPage() {
     return () => clearInterval(timer);
   }, [timeLeft, submitted]);
 
-  /* ========================
-     HANDLE ANSWERS
-  ======================== */
-  const handleOptionChange = (qid, option) => {
-    setSelectedAnswers((prev) => ({
+  /* 📝 SELECT ANSWER */
+  const handleSelect = (qid, option) => {
+    setAnswers((prev) => ({
       ...prev,
       [qid]: option,
     }));
   };
 
-  /* ========================
-     SUBMIT EXAM
-  ======================== */
-  const handleSubmitExam = async () => {
+  /* ⏮ ⏭ Navigation */
+  const prevQuestion = () => {
+    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
+  };
+
+  const nextQuestion = () => {
+    if (currentIndex < questions.length - 1)
+      setCurrentIndex(currentIndex + 1);
+  };
+
+  /* ✅ SUBMIT */
+  const submitExam = () => {
     if (submitted) return;
 
     setSubmitted(true);
-
-    const payload = {
-      studentId: student._id,
-      examId,
-      answers: Object.keys(selectedAnswers).map((qid) => ({
-        questionId: qid,
-        selected: selectedAnswers[qid],
-      })),
-    };
-
-    try {
-      await fetch("http://localhost:5000/api/results/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      alert("Exam submitted successfully");
-      navigate("/student-results");
-    } catch (err) {
-      console.error(err);
-      alert("Submission failed");
-    }
+    localStorage.removeItem("instructionAccepted");
+    alert("Exam submitted successfully");
+    navigate("/StudentHome");
   };
 
-  /* ========================
-     TIMER FORMAT
-  ======================== */
-  const minutes = Math.floor((timeLeft || 0) / 60);
-  const seconds = (timeLeft || 0) % 60;
+  /* ⏱ FORMAT TIME */
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
 
-  if (!exam) return <p>Loading exam...</p>;
+  if (questions.length === 0) {
+    return <p style={{ textAlign: "center" }}>Loading questions...</p>;
+  }
+
+  const currentQuestion = questions[currentIndex];
 
   return (
     <div className="attempt-exam-page">
-      <h2>{exam.examName}</h2>
+      <h2 className="exam-title">Online Examination</h2>
 
-      <div className="timer">
+      {/* ⏳ TIMER */}
+      <div className={`timer ${timeLeft <= 120 ? "danger" : ""}`}>
         ⏳ Time Left: {minutes}:{seconds < 10 ? "0" : ""}
         {seconds}
       </div>
 
-      {questions.map((q, index) => (
-        <div key={q._id} className="question-box">
-          <p>
-            <b>Q{index + 1}.</b> {q.questionText}
-          </p>
+      {/* QUESTION */}
+      <div className="question-box">
+        <p>
+          <b>Q{currentIndex + 1}.</b> {currentQuestion.questionText}
+        </p>
 
-          {q.options.map((op, i) => (
-            <label key={i} className="option">
-              <input
-                type="radio"
-                name={q._id}
-                checked={selectedAnswers[q._id] === op}
-                onChange={() => handleOptionChange(q._id, op)}
-              />
-              {op}
-            </label>
+        {currentQuestion.options.map((op, i) => (
+          <label key={i} className="option">
+            <input
+              type="radio"
+              name={currentQuestion._id}
+              checked={answers[currentQuestion._id] === op}
+              onChange={() =>
+                handleSelect(currentQuestion._id, op)
+              }
+            />
+            {op}
+          </label>
+        ))}
+      </div>
+
+      {/* NAV BUTTONS */}
+      <div className="nav-btns">
+        <div className="nav-left">
+          <button
+            className="prev-btn"
+            disabled={currentIndex === 0}
+            onClick={prevQuestion}
+          >
+            Previous
+          </button>
+
+          <button
+            className="next-btn"
+            disabled={currentIndex === questions.length - 1}
+            onClick={nextQuestion}
+          >
+            Next
+          </button>
+        </div>
+
+        <button className="submit-btn" onClick={submitExam}>
+          Submit Exam
+        </button>
+      </div>
+
+      {/* PALETTE */}
+      <div className="palette-section">
+        <h4 className="palette-title">Questions</h4>
+
+        <div className="question-palette">
+          {questions.map((q, index) => (
+            <div
+              key={q._id}
+              onClick={() => setCurrentIndex(index)}
+              className={`palette-box 
+                ${answers[q._id] ? "attempted" : "not-attempted"} 
+                ${currentIndex === index ? "active" : ""}`}
+            >
+              {index + 1}
+            </div>
           ))}
         </div>
-      ))}
-
-      <button
-        className="submit-btn"
-        onClick={handleSubmitExam}
-        disabled={submitted}
-      >
-        Submit Exam
-      </button>
+      </div>
     </div>
   );
 }

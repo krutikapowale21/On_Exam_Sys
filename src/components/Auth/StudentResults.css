@@ -1,0 +1,40 @@
+.teacher-results-page {
+  padding: 20px;
+}
+
+.exam-details {
+  background: #f5f7fa;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+.exam-details h2 {
+  margin-bottom: 10px;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.results-table th,
+.results-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+}
+
+.results-table th {
+  background-color: #e3e6ea;
+}
+
+.pass {
+  color: green;
+  font-weight: bold;
+}
+
+.fail {
+  color: red;
+  font-weight: bold;
+}

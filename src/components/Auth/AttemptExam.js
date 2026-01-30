@@ -3,30 +3,20 @@ import { useNavigate } from "react-router-dom";
 import "./AttemptExam.css";
 
 function AttemptExam() {
-  const [exams, setExams] = useState([]);
-  const [student, setStudent] = useState(null);
   const navigate = useNavigate();
+  const [exams, setExams] = useState([]);
 
-  // Load student
-  useEffect(() => {
-    const studentData = localStorage.getItem("student");
-    if (!studentData) return;
-    setStudent(JSON.parse(studentData));
-  }, []);
+  const student = JSON.parse(localStorage.getItem("student"));
 
-  // Fetch exams for student's class
   useEffect(() => {
     if (!student || !student.classId) return;
 
-    fetch(`http://localhost:5000/api/exams/student/${student.classId}`)
+fetch(`http://localhost:5000/api/exams/student/${student.classId}`)
       .then((res) => res.json())
-      .then((data) => setExams(data))
-      .catch((err) => console.log(err));
+      .then((data) => setExams(data));
   }, [student]);
 
-  if (!student) {
-    return <h2>Please login again</h2>;
-  }
+  if (!student) return <h2>Please login again</h2>;
 
   return (
     <div className="attempt-exam-page">
@@ -42,7 +32,9 @@ function AttemptExam() {
 
             <button
               className="start-btn"
-              onClick={() => navigate(`/attempt-exam/${exam._id}`)}
+              onClick={() =>
+                navigate(`/exam-instructions/${exam._id}`)
+              }
             >
               Start Exam
             </button>
