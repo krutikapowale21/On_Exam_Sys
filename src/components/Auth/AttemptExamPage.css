@@ -1,207 +1,117 @@
-/* ================================
-   PAGE LAYOUT
-================================ */
+/* MAIN LAYOUT */
+.attempt-exam-layout {
+  display: flex;
+  gap: 25px;
+  padding: 20px;
+  font-family: "Segoe UI", sans-serif;
+  height: 600px;
+}
+
+/* LEFT PANEL */
 .attempt-exam-page {
-  max-width: 720px;
-  margin: 30px auto;
+  flex: 3;
+  background: #fff;
   padding: 25px;
-  background-color: #ffffff;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
-/* ================================
-   HEADING
-================================ */
-.exam-title {
-  text-align: center;
-  margin-bottom: 10px;
-  color: #2c2c2c;
-}
-
-/* ================================
-   QUESTION COUNT
-================================ */
-.q-count {
-  text-align: center;
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 18px;
-}
-
-/* ================================
-   QUESTION BOX
-================================ */
-.question-box {
-  background-color: #f5f7fa;
-  padding: 18px;
-  border-radius: 6px;
-  margin-bottom: 22px;
+/* RIGHT PANEL */
+.exam-status-panel {
+  flex: 1;
+  background: #f9fafc;
+  padding: 20px;
+  border-radius: 8px;
   border: 1px solid #ddd;
 }
 
-.question-text {
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 14px;
-  color: #222;
+.exam-status-panel h3 {
+  margin-bottom: 15px;
 }
 
-/* ================================
-   OPTIONS
-================================ */
+/* STATUS BOXES */
+.status {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.status.attempted {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.status.unattempted {
+  background: #ffebee;
+  color: #b71c1c;
+}
+
+.status.total {
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
+/* QUESTION */
+.question-box {
+  background: #f5f7fa;
+  padding: 18px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  height: 300px;
+}
+
 .option {
   display: block;
   margin-bottom: 10px;
-  font-size: 15px;
-  color: #333;
-  cursor: pointer;
 }
 
-.option input {
-  margin-right: 8px;
-  cursor: pointer;
-}
-
-/* ================================
-   NAV BUTTONS
-================================ */
+/* NAV BUTTONS */
 .nav-btns {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 25px;
+  margin-top: 20px;
 }
 
 .nav-left {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
-/* ================================
-   BUTTONS
-================================ */
 .prev-btn,
 .next-btn,
 .submit-btn {
   padding: 10px 22px;
-  font-size: 15px;
-  border-radius: 5px;
   border: none;
+  border-radius: 5px;
   cursor: pointer;
-  font-weight: 500;
-  transition: 0.3s;
 }
 
-/* Previous */
 .prev-btn {
-  background-color: #e0e0e0;
-}
-.prev-btn:hover:not(:disabled) {
-  background-color: #cfcfcf;
-}
-.prev-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
+  background: #e0e0e0;
 }
 
-/* Next */
 .next-btn {
-  background-color: #1976d2;
-  color: white;
-}
-.next-btn:hover:not(:disabled) {
-  background-color: #125ea8;
+  background: #1976d2;
+  color: #fff;
 }
 
-/* Submit */
 .submit-btn {
-  background-color: #2e7d32;
-  color: white;
-}
-.submit-btn:hover {
-  background-color: #1b5e20;
+  background: #2e7d32;
+  color: #fff;
 }
 
-/* ================================
-   QUESTION STATUS BOXES (BOTTOM)
-================================ */
-.question-status-box {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 30px;
-  gap: 12px;
-}
-
-.status-card {
-  flex: 1;
-  padding: 14px;
-  border-radius: 6px;
-  text-align: center;
-  font-weight: 600;
-}
-
-.status-card .count {
-  display: block;
-  font-size: 22px;
-}
-
-.status-card .label {
-  font-size: 13px;
-  letter-spacing: 0.5px;
-}
-
-/* Colors */
-.status-card.total {
-  background-color: #e3f2fd;
-  color: #0d47a1;
-}
-
-.status-card.attempted {
-  background-color: #e8f5e9;
-  color: #1b5e20;
-}
-
-.status-card.remaining {
-  background-color: #ffebee;
-  color: #b71c1c;
-}
-
-/* ================================
-   MOBILE RESPONSIVE
-================================ */
-@media (max-width: 600px) {
-  .nav-btns {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .question-status-box {
-    flex-direction: column;
-  }
-
-  .prev-btn,
-  .next-btn,
-  .submit-btn {
-    width: 100%;
-  }
-}
-
-/* Separate palette area */
+/* PALETTE */
 .palette-section {
-  margin-top: 40px;
-  padding-top: 15px;
-  border-top: 2px solid #eee;
+  margin-top: 30px;
 }
 
 .palette-title {
-  font-size: 15px;
   margin-bottom: 10px;
-  color: #444;
+  font-weight: 600;
 }
 
-/* Question palette */
 .question-palette {
   display: flex;
   flex-wrap: wrap;
@@ -216,12 +126,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-weight: 500;
   border: 1px solid #ccc;
-}
-
-.palette-box.not-attempted {
-  background: #f2f2f2;
 }
 
 .palette-box.attempted {
@@ -229,7 +134,17 @@
   color: white;
 }
 
+.palette-box.not-attempted {
+  background: #f2f2f2;
+}
+
 .palette-box.active {
   border: 2px solid #1976d2;
-  transform: scale(1.05);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .attempt-exam-layout {
+    flex-direction: column;
+  }
 }

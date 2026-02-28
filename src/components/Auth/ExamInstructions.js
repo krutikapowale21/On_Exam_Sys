@@ -7,12 +7,11 @@ function ExamInstructions() {
   const navigate = useNavigate();
   const [agree, setAgree] = useState(false);
 
-  const startExam = () => {
-    // ✅ Store instruction acceptance
-    localStorage.setItem("instructionAccepted", examId);
-
+ const startExam = () => {
+  localStorage.setItem("instructionAccepted", examId);
+  
     // ✅ Open exam page
-    navigate(`/attempt-exam/${examId}`);
+navigate(`/exam-start/${examId}`);
   };
 
   return (

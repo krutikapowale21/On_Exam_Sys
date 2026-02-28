@@ -25,6 +25,7 @@ import ExamInstructions from "./components/Auth/ExamInstructions";
 import AttemptExamPage from "./components/Auth/AttemptExamPage";
 // import StudentResult from "./components/Auth/StudentResult";
 import StudentClassLogin from "./components/Auth/StudentClassLogin";
+import ExamStartCountdown from "./components/Auth/ExamStartCountdown";
 // import JoinClass from "./components/Auth/JoinClass";
 // import StudentResults from "./components/Auth/StudentResults";
 
@@ -61,6 +62,7 @@ function App() {
         {/* <Route path="/student-result/:resultId" element={<StudentResult />} /> */}
         <Route path="/class-login/:classCode" element={<StudentClassLogin />} />
         <Route path="/join-class/:classId" element={<JoinClass />} />
+        <Route path="/ExamStartCountdown" element={<ExamStartCountdown/>}/>
 
         {/* RESULT */}
         {/* <Route path="/student-results" element={<StudentResults />} /> */}
