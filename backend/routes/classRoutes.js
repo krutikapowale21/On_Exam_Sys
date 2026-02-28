@@ -7,12 +7,9 @@ const Class = require("../models/Class");
 // ==============================
 router.post("/classes", async (req, res) => {
   try {
-    console.log("REQ BODY:", req.body); // 🔍 DEBUG
+    const { className, semester, branch, year } = req.body;
 
-    const { className, subject, semester, branch, year } = req.body;
-
-    // ✅ validation
-    if (!className || !subject || !semester || !branch || !year) {
+    if (!className || !semester || !branch || !year) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -21,10 +18,9 @@ router.post("/classes", async (req, res) => {
 
     const newClass = new Class({
       className,
-      subject,
       semester,
-      branch,   // ✅ VERY IMPORTANT
-      year,     // ✅ VERY IMPORTANT
+      branch,
+      year,
       students: [],
     });
 
@@ -36,14 +32,12 @@ router.post("/classes", async (req, res) => {
       class: newClass,
     });
   } catch (err) {
-    console.error("CREATE CLASS ERROR:", err);
     res.status(500).json({
       success: false,
       message: err.message,
     });
   }
 });
-
 
 // ==============================
 // GET ALL CLASSES
@@ -74,19 +68,19 @@ router.get("/class/:id", async (req, res) => {
   }
 });
 
-
-
-// JOIN CLASS
+// ==============================
+// JOIN CLASS (WITH ROLL NO)
+// ==============================
 router.post("/class/join/:classId", async (req, res) => {
-  console.log("REQ BODY:", req.body);
   try {
-    const { enrollment, name, password } = req.body;
+    const { rollNo, enrollment, name, password } = req.body;
     const { classId } = req.params;
 
-    if (!enrollment || !name || !password) {
+    // ✅ basic validation
+    if (!rollNo || !enrollment || !name || !password) {
       return res.status(400).json({
         success: false,
-        message: "Enrollment, name and password are required",
+        message: "Roll No, enrollment, name and password are required",
       });
     }
 
@@ -98,20 +92,31 @@ router.post("/class/join/:classId", async (req, res) => {
       });
     }
 
-    // BEFORE adding student
-const existingClass = await Class.findOne({
-  "students.enrollment": enrollment,
-});
+    // ❌ SAME ENROLLMENT IN ANY CLASS
+    const enrollmentExists = await Class.findOne({
+      "students.enrollment": enrollment,
+    });
 
-if (existingClass) {
-  return res.status(400).json({
-    success: false,
-    message: "This enrollment number has already joined a class",
-  });
-}
+    if (enrollmentExists) {
+      return res.status(400).json({
+        success: false,
+        message: "This enrollment number has already joined a class",
+      });
+    }
 
+    // ❌ SAME ROLL NO IN SAME CLASS
+    const rollExists = cls.students.find(
+      (s) => s.rollNo === Number(rollNo)
+    );
 
-    // duplicate check
+    if (rollExists) {
+      return res.status(400).json({
+        success: false,
+        message: "This roll number already exists in this class",
+      });
+    }
+
+    // ❌ SAME ENROLLMENT IN SAME CLASS (extra safety)
     const alreadyJoined = cls.students.find(
       (s) => s.enrollment === enrollment
     );
@@ -123,10 +128,13 @@ if (existingClass) {
       });
     }
 
+    // ✅ ADD STUDENT
     cls.students.push({
+      rollNo: Number(rollNo),
       enrollment,
       name,
       password,
+      joinedAt: new Date(),
     });
 
     await cls.save();
@@ -142,5 +150,93 @@ if (existingClass) {
     });
   }
 });
+
+// ==============================
+// UPDATE CLASS (EDIT)
+// ==============================
+router.put("/class/:id", async (req, res) => {
+  try {
+    const { className, branch, year, semester } = req.body;
+
+    const updatedClass = await Class.findByIdAndUpdate(
+      req.params.id,
+      {
+        className,
+        branch,
+        year,
+        semester,
+      },
+      { new: true }
+    );
+
+    if (!updatedClass) {
+      return res.status(404).json({
+        success: false,
+        message: "Class not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Class updated successfully",
+      class: updatedClass,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ==============================
+// DELETE CLASS
+// ==============================
+router.delete("/class/:id", async (req, res) => {
+  try {
+    const deletedClass = await Class.findByIdAndDelete(req.params.id);
+
+    if (!deletedClass) {
+      return res.status(404).json({
+        success: false,
+        message: "Class not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Class deleted successfully",
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ==============================
+// DELETE STUDENT FROM CLASS
+// ==============================
+router.delete("/class/:classId/student/:studentId", async (req, res) => {
+  try {
+    const { classId, studentId } = req.params;
+
+    const cls = await Class.findById(classId);
+    if (!cls) {
+      return res.status(404).json({ message: "Class not found" });
+    }
+
+    cls.students = cls.students.filter(
+      (s) => s._id.toString() !== studentId
+    );
+
+    await cls.save();
+
+    res.json({
+      success: true,
+      message: "Student removed successfully",
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
 
 module.exports = router;

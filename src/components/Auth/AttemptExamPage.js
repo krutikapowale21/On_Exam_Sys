@@ -10,43 +10,79 @@ function AttemptExamPage() {
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [timeLeft, setTimeLeft] = useState(0);
   const [submitted, setSubmitted] = useState(false);
 
   /* 🔐 Instruction Check */
   useEffect(() => {
     if (checked.current) return;
+
     const accepted = localStorage.getItem("instructionAccepted");
-    if (accepted !== examId) navigate("/attempt-exams");
+    if (accepted !== examId) {
+      navigate("/attempt-exams");
+    }
+
     checked.current = true;
   }, [examId, navigate]);
 
-  /* 📥 Fetch Questions */
+  /* 📥 Fetch Exam + Questions */
   useEffect(() => {
-    const fetchQuestions = async () => {
+    const fetchData = async () => {
       try {
+        // Get exam to read duration
+        const examRes = await fetch("http://localhost:5000/api/exams");
+        const exams = await examRes.json();
+        const exam = exams.find((e) => e._id === examId);
+
+        if (!exam) {
+          alert("Exam not found");
+          navigate("/attempt-exams");
+          return;
+        }
+
+        setTimeLeft(exam.duration * 60); // minutes → seconds
+
+        // Get questions
         const res = await fetch(
           `http://localhost:5000/api/questions/${examId}`
         );
         const data = await res.json();
         setQuestions(data);
-      } catch {
-        alert("Failed to load questions");
+      } catch (err) {
+        console.log(err);
+        alert("Failed to load exam");
         navigate("/attempt-exams");
       }
     };
-    fetchQuestions();
+
+    fetchData();
   }, [examId, navigate]);
+
+  /* ⏳ Timer Logic */
+  useEffect(() => {
+    if (timeLeft <= 0 || submitted) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeLeft, submitted]);
 
   /* 📝 Select Answer */
   const handleSelect = (qid, option) => {
-    setAnswers((prev) => ({ ...prev, [qid]: option }));
+    setAnswers((prev) => ({
+      ...prev,
+      [qid]: option,
+    }));
   };
 
-  /* ⏮ ⏭ Navigation */
+  /* ⏮ Previous */
   const prevQuestion = () => {
     if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
   };
 
+  /* ⏭ Next */
   const nextQuestion = () => {
     if (currentIndex < questions.length - 1)
       setCurrentIndex(currentIndex + 1);
@@ -68,12 +104,18 @@ function AttemptExamPage() {
 
     setSubmitted(true);
     localStorage.removeItem("instructionAccepted");
+
     alert("Exam submitted successfully");
     navigate("/StudentHome");
   };
 
-  if (questions.length === 0)
+  /* ⏱ Format Time */
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+
+  if (questions.length === 0) {
     return <p style={{ textAlign: "center" }}>Loading questions...</p>;
+  }
 
   const currentQuestion = questions[currentIndex];
   const attemptedCount = Object.keys(answers).length;
@@ -81,11 +123,17 @@ function AttemptExamPage() {
 
   return (
     <div className="attempt-exam-layout">
-      {/* LEFT : QUESTION AREA */}
+      {/* LEFT SECTION */}
       <div className="attempt-exam-page">
-       <h2 className="exam-title">Online Examination</h2>
+        <h2 className="exam-title">Online Examination</h2>
 
+        {/* TIMER */}
+        <div className={`timer ${timeLeft <= 120 ? "danger" : ""}`}>
+          ⏳ Time Left: {minutes}:{seconds < 10 ? "0" : ""}
+          {seconds}
+        </div>
 
+        {/* QUESTION */}
         <div className="question-box">
           <p>
             <b>Q{currentIndex + 1}.</b> {currentQuestion.questionText}
@@ -104,6 +152,7 @@ function AttemptExamPage() {
           ))}
         </div>
 
+        {/* NAVIGATION */}
         <div className="nav-btns">
           <div className="nav-left">
             <button
@@ -129,28 +178,24 @@ function AttemptExamPage() {
         </div>
       </div>
 
-      {/* RIGHT : PALETTE + STATUS */}
+      {/* RIGHT SECTION */}
       <div className="exam-status-panel">
-        {/* QUESTION PALETTE */}
-        <div className="palette-section">
-          <h3 className="palette-title">Questions</h3>
-          <div className="question-palette">
-            {questions.map((q, index) => (
-              <div
-                key={q._id}
-                onClick={() => setCurrentIndex(index)}
-                className={`palette-box
-                  ${answers[q._id] ? "attempted" : "not-attempted"}
-                  ${currentIndex === index ? "active" : ""}
-                `}
-              >
-                {index + 1}
-              </div>
-            ))}
-          </div>
+        <h3>Questions</h3>
+
+        <div className="question-palette">
+          {questions.map((q, index) => (
+            <div
+              key={q._id}
+              onClick={() => setCurrentIndex(index)}
+              className={`palette-box 
+                ${answers[q._id] ? "attempted" : "not-attempted"} 
+                ${currentIndex === index ? "active" : ""}`}
+            >
+              {index + 1}
+            </div>
+          ))}
         </div>
 
-        {/* STATUS */}
         <h3>Status</h3>
         <div className="status attempted">
           Attempted: <b>{attemptedCount}</b>

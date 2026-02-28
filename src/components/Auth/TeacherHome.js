@@ -16,7 +16,7 @@ function TeacherHome() {
   return (
     <div className="student-home-container">
       {/* Header */}
-      <h1 className="welcome-text">Welcome Teacher 👋</h1>
+      <h1 className="welcome-text">Welcome Teacher</h1>
 
       {/* Cards */}
       <div className="cards-container">

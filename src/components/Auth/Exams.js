@@ -106,6 +106,14 @@ function Exams() {
                 >
                   {exam.isPublished ? "Sent" : "Send Exam"}
                 </button>
+
+                {/* 🔥 RESULT BUTTON */}
+                <button
+                  className="result-btn"
+                  onClick={() => navigate(`/student-results/${exam._id}`)}
+                >
+                  View Results
+                </button>
               </div>
             </div>
           ))

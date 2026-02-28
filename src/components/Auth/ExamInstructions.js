@@ -7,11 +7,20 @@ function ExamInstructions() {
   const navigate = useNavigate();
   const [agree, setAgree] = useState(false);
 
+<<<<<<< HEAD
  const startExam = () => {
   localStorage.setItem("instructionAccepted", examId);
   
     // ✅ Open exam page
 navigate(`/exam-start/${examId}`);
+=======
+  const startExam = () => {
+    // ✅ Store instruction acceptance
+    localStorage.setItem("instructionAccepted", examId);
+
+    // ✅ Open exam page
+    navigate(`/attempt-exam/${examId}`);
+>>>>>>> 93376bd1af05580232d9d040a6a6b5f2b121a87e
   };
 
   return (
@@ -81,4 +90,8 @@ navigate(`/exam-start/${examId}`);
   );
 }
 
+<<<<<<< HEAD
 export default ExamInstructions;
+=======
+export default ExamInstructions;
+>>>>>>> 93376bd1af05580232d9d040a6a6b5f2b121a87e
