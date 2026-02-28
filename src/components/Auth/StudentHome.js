@@ -21,11 +21,11 @@ function StudentHome() {
         </Link>
 
         {/* Results */}
-        <Link to="/StudentResults" className="home-card">
+        {/* <Link to="/StudentResults" className="home-card">
           <HiOutlineChartBar className="card-icon"/>
           <h3>Results</h3>
           <p>View marks and performance.</p>
-        </Link>
+        </Link> */}
 
       </div>
 

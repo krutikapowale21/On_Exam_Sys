@@ -10,20 +10,17 @@ function AttemptExamPage() {
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [submitted, setSubmitted] = useState(false);
 
-  /* 🔐 INSTRUCTION CHECK */
+  /* 🔐 Instruction Check */
   useEffect(() => {
     if (checked.current) return;
-
     const accepted = localStorage.getItem("instructionAccepted");
-    if (accepted !== examId) {
-      navigate("/attempt-exams");
-    }
-
+    if (accepted !== examId) navigate("/attempt-exams");
     checked.current = true;
   }, [examId, navigate]);
 
-  /* 📥 FETCH QUESTIONS */
+  /* 📥 Fetch Questions */
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -32,22 +29,17 @@ function AttemptExamPage() {
         );
         const data = await res.json();
         setQuestions(data);
-      } catch (err) {
-        console.log(err);
+      } catch {
         alert("Failed to load questions");
         navigate("/attempt-exams");
       }
     };
-
     fetchQuestions();
   }, [examId, navigate]);
 
-  /* 📝 SELECT ANSWER */
+  /* 📝 Select Answer */
   const handleSelect = (qid, option) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [qid]: option,
-    }));
+    setAnswers((prev) => ({ ...prev, [qid]: option }));
   };
 
   /* ⏮ ⏭ Navigation */
@@ -60,25 +52,40 @@ function AttemptExamPage() {
       setCurrentIndex(currentIndex + 1);
   };
 
-  /* ✅ SUBMIT */
+  /* ✅ Submit */
   const submitExam = () => {
+    if (submitted) return;
+
+    const attempted = Object.keys(answers).length;
+    const unattempted = questions.length - attempted;
+
+    if (unattempted > 0) {
+      const ok = window.confirm(
+        `You have ${unattempted} unanswered question(s).\nDo you want to submit the exam?`
+      );
+      if (!ok) return;
+    }
+
+    setSubmitted(true);
     localStorage.removeItem("instructionAccepted");
     alert("Exam submitted successfully");
     navigate("/StudentHome");
   };
 
-  if (questions.length === 0) {
+  if (questions.length === 0)
     return <p style={{ textAlign: "center" }}>Loading questions...</p>;
-  }
 
   const currentQuestion = questions[currentIndex];
+  const attemptedCount = Object.keys(answers).length;
+  const unattemptedCount = questions.length - attemptedCount;
 
   return (
-    <div className="attempt-exam-page">
-      <h2 className="exam-title">Online Examination</h2>
+    <div className="attempt-exam-layout">
+      {/* LEFT : QUESTION AREA */}
+      <div className="attempt-exam-page">
+       <h2 className="exam-title">Online Examination</h2>
 
-      {/* ================= QUESTION AREA ================= */}
-      <div className="question-section">
+
         <div className="question-box">
           <p>
             <b>Q{currentIndex + 1}.</b> {currentQuestion.questionText}
@@ -90,16 +97,13 @@ function AttemptExamPage() {
                 type="radio"
                 name={currentQuestion._id}
                 checked={answers[currentQuestion._id] === op}
-                onChange={() =>
-                  handleSelect(currentQuestion._id, op)
-                }
+                onChange={() => handleSelect(currentQuestion._id, op)}
               />
               {op}
             </label>
           ))}
         </div>
 
-        {/* ================= NAVIGATION ================= */}
         <div className="nav-btns">
           <div className="nav-left">
             <button
@@ -119,34 +123,43 @@ function AttemptExamPage() {
             </button>
           </div>
 
-          <div className="nav-right">
-            <button className="submit-btn" onClick={submitExam}>
-              Submit Exam
-            </button>
-          </div>
+          <button className="submit-btn" onClick={submitExam}>
+            Submit Exam
+          </button>
         </div>
       </div>
 
-      {/* ================= QUESTION PALETTE ================= */}
-      <div className="palette-section">
-        <h4 className="palette-title">Questions</h4>
-
-        <div className="question-palette">
-          {questions.map((q, index) => {
-            const attempted = answers[q._id];
-
-            return (
+      {/* RIGHT : PALETTE + STATUS */}
+      <div className="exam-status-panel">
+        {/* QUESTION PALETTE */}
+        <div className="palette-section">
+          <h3 className="palette-title">Questions</h3>
+          <div className="question-palette">
+            {questions.map((q, index) => (
               <div
                 key={q._id}
                 onClick={() => setCurrentIndex(index)}
-                className={`palette-box 
-                  ${attempted ? "attempted" : "not-attempted"} 
-                  ${currentIndex === index ? "active" : ""}`}
+                className={`palette-box
+                  ${answers[q._id] ? "attempted" : "not-attempted"}
+                  ${currentIndex === index ? "active" : ""}
+                `}
               >
                 {index + 1}
               </div>
-            );
-          })}
+            ))}
+          </div>
+        </div>
+
+        {/* STATUS */}
+        <h3>Status</h3>
+        <div className="status attempted">
+          Attempted: <b>{attemptedCount}</b>
+        </div>
+        <div className="status unattempted">
+          Unattempted: <b>{unattemptedCount}</b>
+        </div>
+        <div className="status total">
+          Total Questions: <b>{questions.length}</b>
         </div>
       </div>
     </div>
