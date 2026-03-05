@@ -1,28 +1,3 @@
-<<<<<<< HEAD
-// // import React, { useEffect, useState } from "react";
-
-// // function StudentResults() {
-// //   const [results, setResults] = useState([]);
-// //   const student = JSON.parse(localStorage.getItem("student"));
-
-// //   useEffect(() => {
-// //     if (!student || !student._id) {
-// //       alert("Please login again");
-// //       return;
-// //     }
-
-// //     fetch(
-// //       `http://localhost:5000/api/results/student/${student._id}`
-// //     )
-// //       .then((res) => res.json())
-// //       .then((data) => setResults(data))
-// //       .catch((err) => console.log(err));
-// //   }, []);
-
-// //   return (
-//     <div>
-// //       <h2>My Results</h2>
-=======
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./StudentResults.css";
@@ -43,10 +18,10 @@ function StudentResults() {
   }, [examId]);
 
   /* ======================
-     EXPORT TO EXCEL (CSV)
+     EXPORT TO CSV
   ====================== */
   const exportResults = () => {
-    if (!results || results.length === 0) {
+    if (!results.length) {
       alert("No results to export");
       return;
     }
@@ -64,18 +39,12 @@ function StudentResults() {
         `${r.result}\n`;
     });
 
-    const blob = new Blob([csv], {
-      type: "text/csv;charset=utf-8;",
-    });
-
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
 
+    const link = document.createElement("a");
     link.href = url;
-    link.setAttribute(
-      "download",
-      `${exam.examName}_results.csv`
-    );
+    link.setAttribute("download", `${exam.examName}_results.csv`);
 
     document.body.appendChild(link);
     link.click();
@@ -87,13 +56,11 @@ function StudentResults() {
   return (
     <div className="teacher-results-page">
 
-      {/* 🔹 EXAM DETAILS */}
+      {/* Exam Info */}
       <div className="exam-details">
         <h2>Exam Results</h2>
         <p><b>Exam Name:</b> {exam.examName}</p>
-        <p>
-          <b>Subject:</b> {exam.subject} ({exam.subCode})
-        </p>
+        <p><b>Subject:</b> {exam.subject} ({exam.subCode})</p>
         <p><b>Branch:</b> {exam.branch}</p>
         <p><b>Semester:</b> {exam.semester}</p>
         <p><b>Total Marks:</b> {exam.totalMarks}</p>
@@ -101,7 +68,7 @@ function StudentResults() {
 
       <hr />
 
-      {/* 🔹 HEADER + EXPORT */}
+      {/* Header */}
       <div className="result-header">
         <h3>Student Results ({results.length})</h3>
         <button className="export-btn" onClick={exportResults}>
@@ -109,7 +76,7 @@ function StudentResults() {
         </button>
       </div>
 
-      {/* 🔹 RESULT TABLE */}
+      {/* Table */}
       {results.length === 0 ? (
         <p>No student has submitted the exam yet</p>
       ) : (
@@ -133,11 +100,7 @@ function StudentResults() {
                 <td>{r.name}</td>
                 <td>{r.marks}</td>
                 <td>{r.percentage}%</td>
-                <td
-                  className={
-                    r.result === "Pass" ? "pass" : "fail"
-                  }
-                >
+                <td className={r.result === "Pass" ? "pass" : "fail"}>
                   {r.result}
                 </td>
               </tr>
@@ -145,25 +108,9 @@ function StudentResults() {
           </tbody>
         </table>
       )}
+
     </div>
   );
 }
->>>>>>> 93376bd1af05580232d9d040a6a6b5f2b121a87e
 
-// //       {results.length === 0 ? (
-// //         <p>No results found</p>
-// //       ) : (
-// //         results.map((r, index) => (
-// //           <div key={index}>
-// //             <p><b>Exam:</b> {r.examName}</p>
-// //             <p><b>Marks:</b> {r.marks}</p>
-// //             <p><b>Result:</b> {r.result}</p>
-// //             <hr />
-// //           </div>
-// //         ))
-// //       )}
-// //     </div>
-// //   );
-// // }
-
-// // export default StudentResults;
+export default StudentResults;

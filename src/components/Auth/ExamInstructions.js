@@ -7,20 +7,12 @@ function ExamInstructions() {
   const navigate = useNavigate();
   const [agree, setAgree] = useState(false);
 
-<<<<<<< HEAD
- const startExam = () => {
-  localStorage.setItem("instructionAccepted", examId);
-  
-    // ✅ Open exam page
-navigate(`/exam-start/${examId}`);
-=======
   const startExam = () => {
-    // ✅ Store instruction acceptance
+    // ✅ Save instruction acceptance
     localStorage.setItem("instructionAccepted", examId);
 
-    // ✅ Open exam page
+    // ✅ Open Attempt Exam Page
     navigate(`/attempt-exam/${examId}`);
->>>>>>> 93376bd1af05580232d9d040a6a6b5f2b121a87e
   };
 
   return (
@@ -29,39 +21,31 @@ navigate(`/exam-start/${examId}`);
 
       <ul className="instruction-list">
         <li>
-          The total duration of the examination is fixed and will not be
-          extended under any circumstances.
+          The total duration of the examination is fixed and will not be extended under any circumstances.
         </li>
         <li>
-          Once the examination starts, it cannot be paused, restarted, or
-          resumed.
+          Once the examination starts, it cannot be paused, restarted, or resumed.
         </li>
         <li>
-          Students must not refresh, close, or navigate away from the browser
-          window during the examination.
+          Students must not refresh, close, or navigate away from the browser window during the examination.
         </li>
         <li>
           Each question carries equal marks unless otherwise specified.
         </li>
         <li>
-          Only one option is correct for each question. Multiple selections are
-          not allowed.
+          Only one option is correct for each question. Multiple selections are not allowed.
         </li>
         <li>
-          The examination will be automatically submitted when the allotted
-          time expires.
+          The examination will be automatically submitted when the allotted time expires.
         </li>
         <li>
-          Any form of malpractice, including switching tabs or using unfair
-          means, may result in disqualification.
+          Any form of malpractice may result in disqualification.
         </li>
         <li>
-          Ensure a stable internet connection and functional device before
-          starting the examination.
+          Ensure a stable internet connection before starting the examination.
         </li>
         <li>
-          The institution is not responsible for submission failures due to
-          power loss, network issues, or system errors at the student’s end.
+          The institution is not responsible for submission failures due to power loss or network issues.
         </li>
       </ul>
 
@@ -74,8 +58,7 @@ navigate(`/exam-start/${examId}`);
           onChange={(e) => setAgree(e.target.checked)}
         />
         <label htmlFor="agree">
-          I have read and understood all the instructions and agree to follow
-          them.
+          I have read and understood all the instructions and agree to follow them.
         </label>
       </div>
 
@@ -90,8 +73,4 @@ navigate(`/exam-start/${examId}`);
   );
 }
 
-<<<<<<< HEAD
 export default ExamInstructions;
-=======
-export default ExamInstructions;
->>>>>>> 93376bd1af05580232d9d040a6a6b5f2b121a87e

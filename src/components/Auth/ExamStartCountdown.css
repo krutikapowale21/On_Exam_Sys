@@ -1,3 +1,6 @@
+/* ===============================
+   COUNTDOWN PAGE
+=============================== */
 .countdown-page {
   height: 100vh;
   display: flex;
@@ -5,14 +8,21 @@
   justify-content: center;
   align-items: center;
   background: #f8fafc;
-  font-family: "Segoe UI", sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* ===============================
+   TITLE
+=============================== */
 .countdown-page h2 {
   margin-bottom: 20px;
   color: #1f2937;
+  font-weight: 600;
 }
 
+/* ===============================
+   COUNTDOWN CIRCLE
+=============================== */
 .countdown-circle {
   width: 120px;
   height: 120px;
@@ -25,8 +35,13 @@
   justify-content: center;
   align-items: center;
   margin-bottom: 15px;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
 }
 
+/* ===============================
+   SUBTEXT
+=============================== */
 .countdown-page p {
   color: #6b7280;
+  font-size: 14px;
 }

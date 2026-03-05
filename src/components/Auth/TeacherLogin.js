@@ -4,7 +4,7 @@ import "./TeacherLogin.css";
 
 function TeacherLogin() {
   const navigate = useNavigate();
-  const [UserName, setUserName] = useState("");   // ✅ UserName
+  const [UserName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -24,8 +24,9 @@ function TeacherLogin() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        // ✅ teacher save
+        // Save teacher info
         localStorage.setItem("teacher", JSON.stringify(data.teacher));
+
         navigate("/TeacherHome");
       } else {
         setError(data.message || "Invalid UserName or Password");
@@ -38,12 +39,14 @@ function TeacherLogin() {
   return (
     <div className="container">
       <div className="box">
-        <center><h2>Teacher Login</h2></center>
+        <center>
+          <h2>Teacher Login</h2>
+        </center>
 
         <input
           className="input"
           type="text"
-          placeholder="Enter Text"
+          placeholder="Enter UserName"
           value={UserName}
           onChange={(e) => setUserName(e.target.value)}
         />
@@ -59,6 +62,7 @@ function TeacherLogin() {
         {error && <p style={{ color: "red" }}>{error}</p>}
 
         <br />
+
         <button className="btn" onClick={handleLogin}>
           Login
         </button>

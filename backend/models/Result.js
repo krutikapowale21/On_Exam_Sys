@@ -4,6 +4,17 @@ const resultSchema = new mongoose.Schema(
   {
     studentId: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+      required: true,
+    },
+
+    studentName: {
+      type: String,
+      required: true,
+    },
+
+    enrollment: {
+      type: String,
       required: true,
     },
 
@@ -18,19 +29,43 @@ const resultSchema = new mongoose.Schema(
       required: true,
     },
 
-    studentName: {
-      type: String,
+    classId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Class",
       required: true,
     },
 
-    enrollment: {
-      type: String,
-      required: true,
+    answers: [
+      {
+        questionId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Question",
+        },
+        selected: String,
+        correct: String,
+        isCorrect: Boolean,
+      },
+    ],
+
+    totalQuestions: {
+      type: Number,
     },
 
-    totalQuestions: Number,
-    correctAnswers: Number,
-    marks: Number,
+    correctAnswers: {
+      type: Number,
+    },
+
+    wrongAnswers: {
+      type: Number,
+    },
+
+    totalMarks: {
+      type: Number,
+    },
+
+    obtainedMarks: {
+      type: Number,
+    },
 
     submittedAt: {
       type: Date,

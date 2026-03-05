@@ -16,12 +16,8 @@ function AttemptExamPage() {
   /* 🔐 Instruction Check */
   useEffect(() => {
     if (checked.current) return;
-
     const accepted = localStorage.getItem("instructionAccepted");
-    if (accepted !== examId) {
-      navigate("/attempt-exams");
-    }
-
+    if (accepted !== examId) navigate("/attempt-exams");
     checked.current = true;
   }, [examId, navigate]);
 
@@ -71,10 +67,7 @@ function AttemptExamPage() {
 
   /* 📝 Select Answer */
   const handleSelect = (qid, option) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [qid]: option,
-    }));
+    setAnswers((prev) => ({ ...prev, [qid]: option }));
   };
 
   /* ⏮ Previous */
@@ -113,9 +106,8 @@ function AttemptExamPage() {
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
 
-  if (questions.length === 0) {
+  if (questions.length === 0)
     return <p style={{ textAlign: "center" }}>Loading questions...</p>;
-  }
 
   const currentQuestion = questions[currentIndex];
   const attemptedCount = Object.keys(answers).length;
@@ -180,22 +172,25 @@ function AttemptExamPage() {
 
       {/* RIGHT SECTION */}
       <div className="exam-status-panel">
-        <h3>Questions</h3>
-
-        <div className="question-palette">
-          {questions.map((q, index) => (
-            <div
-              key={q._id}
-              onClick={() => setCurrentIndex(index)}
-              className={`palette-box 
-                ${answers[q._id] ? "attempted" : "not-attempted"} 
-                ${currentIndex === index ? "active" : ""}`}
-            >
-              {index + 1}
-            </div>
-          ))}
+        {/* QUESTION PALETTE */}
+        <div className="palette-section">
+          <h3 className="palette-title">Questions</h3>
+          <div className="question-palette">
+            {questions.map((q, index) => (
+              <div
+                key={q._id}
+                onClick={() => setCurrentIndex(index)}
+                className={`palette-box 
+                  ${answers[q._id] ? "attempted" : "not-attempted"} 
+                  ${currentIndex === index ? "active" : ""}`}
+              >
+                {index + 1}
+              </div>
+            ))}
+          </div>
         </div>
 
+        {/* STATUS */}
         <h3>Status</h3>
         <div className="status attempted">
           Attempted: <b>{attemptedCount}</b>

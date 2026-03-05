@@ -1,42 +1,56 @@
+/* ================================
+   PAGE CONTAINER
+================================ */
 .add-question-page {
   min-height: 100vh;
-  background: #f4f6f8;
+  background: #eef2f7;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
 }
 
+/* ================================
+   CARD
+================================ */
 .add-question-card {
-  background: #fff;
+  background: #ffffff;
+  width: 500px;
   padding: 30px;
-  width: 450px;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
+/* ================================
+   HEADINGS
+================================ */
 .page-title {
   text-align: center;
   margin-bottom: 15px;
-  color: #333;
+  color: #1f2937;
 }
 
 .question-counter {
   text-align: center;
-  font-size: 15px;
-  margin-bottom: 10px;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #555;
 }
 
 .limit-text {
   text-align: center;
-  color: red;
-  font-weight: bold;
+  color: #d32f2f;
+  font-weight: 600;
   margin-bottom: 10px;
 }
 
+/* ================================
+   FORM
+================================ */
 .question-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .input {
@@ -44,33 +58,43 @@
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 14px;
+  transition: border 0.2s ease;
 }
 
 .input:focus {
-  border-color: #007bff;
+  border-color: #1976d2;
   outline: none;
 }
 
-.done-btn{
+/* ================================
+   BUTTONS
+================================ */
+.done-btn {
   margin-top: 10px;
   padding: 10px;
-  background: #007bff;
+  background: #22c55e;
   color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 15px;
+  transition: background 0.2s ease;
+}
+
+.done-btn:hover {
+  background: #16a34a;
 }
 
 .submit-btn {
   margin-top: 10px;
   padding: 10px;
-  background: #007bff;
+  background: #1976d2;
   color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 15px;
+  transition: background 0.2s ease;
 }
 
 .submit-btn:disabled {
@@ -79,69 +103,33 @@
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: #0056b3;
+  background: #125ea8;
 }
 
-.add-question-page {
-  min-height: 100vh;
-  background: #eef2f7;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-}
-
-.add-question-card {
-  background: #fff;
-  width: 500px;
-  padding: 25px;
-  border-radius: 10px;
-}
-
-.question-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.question-form input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.question-form button {
-  background: #007bff;
-  color: white;
-  padding: 8px;
-  border: none;
-  border-radius: 5px;
-}
-
+/* ================================
+   QUESTION LIST
+================================ */
 .list-title {
-  margin-top: 20px;
+  margin-top: 25px;
+  font-weight: 600;
 }
 
 .question-item {
-  background: #f9f9f9;
-  padding: 10px;
+  background: #f9fafb;
+  padding: 12px;
   margin-top: 10px;
-  border-radius: 6px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
 }
 
 .correct {
-  color: green;
-  font-weight: bold;
+  color: #16a34a;
+  font-weight: 600;
 }
 
-.delete-btn {
-  background: red;
-  color: white;
-  border: none;
-  padding: 5px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
+/* ================================
+   ACTION BUTTONS
+================================ */
 .btn-row {
   display: flex;
   gap: 10px;
@@ -149,10 +137,39 @@
 }
 
 .edit-btn {
-  background: orange;
+  background: #f59e0b;
   color: white;
   border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
+  padding: 6px 10px;
+  border-radius: 5px;
   cursor: pointer;
+  font-size: 13px;
+}
+
+.edit-btn:hover {
+  background: #d97706;
+}
+
+.delete-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media (max-width: 600px) {
+  .add-question-card {
+    width: 100%;
+    padding: 20px;
+  }
 }

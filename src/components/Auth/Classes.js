@@ -15,9 +15,13 @@ function Classes() {
   const navigate = useNavigate();
 
   const fetchClasses = async () => {
-    const res = await fetch("http://localhost:5000/api/classes");
-    const data = await res.json();
-    setClasses(data);
+    try {
+      const res = await fetch("http://localhost:5000/api/classes");
+      const data = await res.json();
+      setClasses(data);
+    } catch (err) {
+      console.log("Error fetching classes:", err);
+    }
   };
 
   useEffect(() => {
@@ -26,10 +30,10 @@ function Classes() {
 
   // ❌ DELETE CLASS
   const deleteClass = async (id) => {
-    const confirm = window.confirm(
+    const confirmDelete = window.confirm(
       "Are you sure you want to delete this class?"
     );
-    if (!confirm) return;
+    if (!confirmDelete) return;
 
     await fetch(`http://localhost:5000/api/class/${id}`, {
       method: "DELETE",
