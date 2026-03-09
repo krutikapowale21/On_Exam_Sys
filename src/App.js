@@ -22,7 +22,6 @@ import EditExam from "./components/Auth/EditExam";
 
 import AttemptExam from "./components/Auth/AttemptExam";
 import ExamInstructions from "./components/Auth/ExamInstructions";
-import ExamStartCountdown from "./components/Auth/ExamStartCountdown";
 import AttemptExamPage from "./components/Auth/AttemptExamPage";
 import StudentResults from "./components/Auth/StudentResults";
 
@@ -56,7 +55,7 @@ function App() {
         {/* STUDENT EXAM FLOW */}
         <Route path="/attempt-exams" element={<AttemptExam />} />
         <Route path="/exam-instructions/:examId" element={<ExamInstructions />} />
-        <Route path="/exam-start/:examId" element={<ExamStartCountdown />} />
+        {/* <Route path="/exam-start/:examId" element={<ExamStartCountdown />} /> */}
         <Route path="/attempt-exam/:examId" element={<AttemptExamPage />} />
 
         {/* RESULTS */}
