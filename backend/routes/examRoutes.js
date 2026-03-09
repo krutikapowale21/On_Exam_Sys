@@ -1,201 +1,322 @@
 const express = require("express");
 const router = express.Router();
+
 const Exam = require("../models/Exam");
-
-// console.log("Exam model type:", typeof Exam);
-// console.log("Exam keys:", Object.keys(Exam));
+const ExamAccess = require("../models/ExamAccess");
+const Class = require("../models/Class");
 
 /* ======================
-   CREATE EXAM
+CREATE EXAM
 ====================== */
-router.post("/exams", async (req, res) => {
-  try {
-    console.log("BODY RECEIVED:", req.body);
 
-    const {
-      examName,
-      branch,
-      year,
-      semester,
-      subject,
-      subCode,
-      examDate,
-      startTime,
-      endTime,
-      totalQuestions,
-      duration,
-      totalMarks,
-      classId,
-    } = req.body;
+router.post("/exams", async (req,res)=>{
 
-    // BASIC VALIDATION
-    if (
-      !examName ||
-      !branch ||
-      !year ||
-      !semester ||
-      !subject ||
-      !subCode ||
-      !examDate ||
-      !startTime ||
-      !endTime ||
-      !classId
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing required fields",
-      });
-    }
+try{
 
-    // Convert numbers safely
-    const safeTotalQuestions = Number(totalQuestions) || 0;
-    const safeDuration = Number(duration) || 0;
-    const safeTotalMarks = Number(totalMarks) || 0;
+const{
+examName,
+branch,
+year,
+semester,
+subject,
+subCode,
+examDate,
+totalQuestions,
+duration,
+totalMarks,
+classId
+}=req.body;
 
-    // Convert date safely
-    const safeDate = new Date(examDate);
+if(
+!examName ||
+!branch ||
+!year ||
+!semester ||
+!subject ||
+!subCode ||
+!examDate ||
+!classId
+){
+return res.status(400).json({
+success:false,
+message:"Missing required fields"
+});
+}
 
-    if (isNaN(safeDate.getTime())) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid exam date",
-      });
-    }
+const safeDate = new Date(examDate);
 
-    const exam = new Exam({
-      examName,
-      branch,
-      year,
-      semester,
-      subject,
-      subCode,
-      examDate,
-      totalQuestions,
-      duration,
-      totalMarks,
-      examDate: safeDate,
-      startTime,
-      endTime,
-      totalQuestions: safeTotalQuestions,
-      duration: safeDuration,
-      totalMarks: safeTotalMarks,
-      classId,
-      isPublished: false,
-    });
+const exam = new Exam({
 
-    await exam.save();
+examName,
+branch,
+year,
+semester,
+subject,
+subCode,
+examDate:safeDate,
 
-    res.json({
-      success: true,
-      message: "Exam created successfully",
-      exam,
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-    console.error("CREATE EXAM ERROR FULL:", err);
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
+totalQuestions:Number(totalQuestions) || 0,
+duration:Number(duration) || 0,
+totalMarks:Number(totalMarks) || 0,
+
+classId,
+isPublished:false
+
+});
+
+await exam.save();
+
+res.status(201).json({
+success:true,
+message:"Exam created successfully",
+exam
+});
+
+}
+catch(err){
+
+console.error("CREATE EXAM ERROR:",err);
+
+res.status(500).json({
+success:false,
+message:err.message
+});
+
+}
+
 });
 
 /* ======================
-   GET ALL EXAMS
+GET ALL EXAMS
 ====================== */
-router.get("/exams", async (req, res) => {
-  try {
-    const exams = await Exam.find().populate("classId");
-    res.json(exams);
-  } catch (err) {
-    console.error("GET EXAMS ERROR:", err);
-    res.status(500).json({ message: err.message });
-  }
+
+router.get("/exams", async (req,res)=>{
+
+try{
+
+const exams = await Exam.find().sort({createdAt:-1});
+res.json(exams);
+
+}
+catch(err){
+
+console.error("GET EXAMS ERROR:",err);
+
+res.status(500).json({
+message:err.message
+});
+
+}
+
 });
 
 /* ======================
-   DELETE EXAM
+PUBLISH / UNPUBLISH
 ====================== */
-router.delete("/exams/:id", async (req, res) => {
-  try {
-    await Exam.findByIdAndDelete(req.params.id);
-    res.json({
-      success: true,
-      message: "Exam deleted successfully",
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+
+router.put("/exams/toggle-publish/:id", async (req,res)=>{
+
+try{
+
+const exam = await Exam.findById(req.params.id);
+
+if(!exam){
+
+return res.status(404).json({
+success:false,
+message:"Exam not found"
+});
+
+}
+
+exam.isPublished = !exam.isPublished;
+
+await exam.save();
+
+res.json({
+
+success:true,
+message: exam.isPublished ? "Exam Published" : "Exam Unpublished",
+exam
+
+});
+
+}
+catch(err){
+
+console.error("TOGGLE PUBLISH ERROR:",err);
+
+res.status(500).json({
+success:false,
+message:err.message
+});
+
+}
+
 });
 
 /* ======================
-   PUBLISH EXAM
+GENERATE STUDENT CODES
 ====================== */
-router.put("/exams/publish/:id", async (req, res) => {
-  try {
-    await Exam.findByIdAndUpdate(req.params.id, {
-      isPublished: true,
-    });
 
-    res.json({
-      success: true,
-      message: "Exam sent to students",
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+router.post("/exams/generate-codes/:examId", async (req,res)=>{
+
+try{
+
+const examId = req.params.examId;
+const {classId} = req.body;
+
+/* find class */
+
+const classData = await Class.findById(classId);
+
+if(!classData){
+
+return res.status(404).json({
+message:"Class not found"
+});
+
+}
+
+const students = classData.students;
+
+if(!students.length){
+
+return res.json([]);
+
+}
+
+const codes = [];
+
+/* generate unique codes */
+
+for(const student of students){
+
+const code = Math.floor(100000 + Math.random()*900000).toString();
+
+const access = new ExamAccess({
+
+examId,
+studentId:student.enrollment,
+accessCode:code,
+used:false
+
+});
+
+await access.save();
+
+codes.push({
+
+studentName:student.name,
+studentId:student.enrollment,
+code
+
+});
+
+}
+
+res.json(codes);
+
+}
+catch(err){
+
+console.error("GENERATE CODES ERROR:",err);
+
+res.status(500).json({
+message:err.message
+});
+
+}
+
 });
 
 /* ======================
-   STUDENT – GET EXAMS
-   (ONLY PUBLISHED + SAME CLASS)
+GET EXAMS FOR STUDENT
 ====================== */
+
 router.get("/exams/student/:classId", async (req, res) => {
-  try {
-    const exams = await Exam.find({
-      classId: req.params.classId,
-      isPublished: true,
-    });
 
-    res.json(exams);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+try {
+
+const exams = await Exam.find({
+classId: req.params.classId,
+isPublished: true
+}).sort({ examDate: 1 });
+
+res.json(exams);
+
+}
+catch (err) {
+
+console.error("STUDENT EXAMS ERROR:", err);
+
+res.status(500).json({
+message: err.message
 });
 
-/* ===============================
-   TEACHER DASHBOARD – EXAM STATUS
-=============================== */
-router.get("/dashboard/exams", async (req, res) => {
-  try {
-    const exams = await Exam.find()
-      .populate("classId", "className branch semester year")
-      .sort({ examDate: 1 });
+}
 
-    const now = new Date();
-
-    const examsWithStatus = exams.map((exam) => {
-      const start = new Date(exam.examDate);
-      const end = new Date(start.getTime() + exam.duration * 60000);
-
-      let status = "UPCOMING";
-
-      if (now >= start && now <= end) {
-        status = "LIVE";
-      } else if (now > end) {
-        status = "ENDED";
-      }
-
-      return {
-        ...exam._doc,
-        status,
-      };
-    });
-
-    res.json(examsWithStatus);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
 });
+
+/* ======================
+VERIFY EXAM CODE
+====================== */
+
+router.post("/exams/verify-code", async (req,res)=>{
+
+try{
+
+const {examId, code} = req.body;
+
+/* find code */
+
+const access = await ExamAccess.findOne({
+examId:examId,
+accessCode:code
+});
+
+if(!access){
+
+return res.status(400).json({
+success:false,
+message:"Invalid Code"
+});
+
+}
+
+/* check used */
+
+if(access.used){
+
+return res.status(400).json({
+success:false,
+message:"Code already used"
+});
+
+}
+
+/* mark used */
+
+access.used = true;
+await access.save();
+
+res.json({
+success:true,
+message:"Code Verified"
+});
+
+}
+catch(err){
+
+console.error("VERIFY CODE ERROR:",err);
+
+res.status(500).json({
+message:err.message
+});
+
+}
+
+});
+
 
 module.exports = router;

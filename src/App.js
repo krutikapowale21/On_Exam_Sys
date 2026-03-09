@@ -1,29 +1,30 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import FrontPage from "./components/Auth/FrontPage";
-import StudentLogin from "./components/Auth/StudentLogin";
-import Registration from "./components/Auth/Registration";
-import TeacherLogin from "./components/Auth/TeacherLogin";
-import TeacherHome from "./components/Auth/TeacherHome";
-import StudentHome from "./components/Auth/StudentHome";
+import FrontPage from "./components/Authentication/FrontPage";
+import StudentLogin from "./components/Student-ui/StudentLogin";
+import Registration from "./components/Student-ui/Registration";
+import TeacherLogin from "./components/Teacher-ui/TeacherLogin";
+import TeacherHome from "./components/Teacher-ui/TeacherHome";
+import StudentHome from "./components/Student-ui/StudentHome";
 
-import CreateClass from "./components/Auth/CreateClass";
-import Classes from "./components/Auth/Classes";
-import ViewClass from "./components/Auth/ViewClass";
-import EditClass from "./components/Auth/EditClass";
-import JoinClass from "./components/Auth/JoinClass";
-import StudentClassLogin from "./components/Auth/StudentClassLogin";
+import CreateClass from "./components/Teacher-ui/CreateClass";
+import Classes from "./components/Teacher-ui/Classes";
+import ViewClass from "./components/Teacher-ui/ViewClass";
+import EditClass from "./components/Teacher-ui/EditClass";
+import JoinClass from "./components/Student-ui/JoinClass";
+import StudentClassLogin from "./components/Student-ui/StudentClassLogin";
 
-import CreateExam from "./components/Auth/CreateExam";
-import Exams from "./components/Auth/Exams";
-import AddQuestion from "./components/Auth/AddQuestion";
-import EditExam from "./components/Auth/EditExam";
+import CreateExam from "./components/Teacher-ui/CreateExam";
+import Exams from "./components/Teacher-ui/Exams";
+import AddQuestion from "./components/Teacher-ui/AddQuestion";
+import EditExam from "./components/Teacher-ui/EditExam";
 
-import AttemptExam from "./components/Auth/AttemptExam";
-import ExamInstructions from "./components/Auth/ExamInstructions";
-import AttemptExamPage from "./components/Auth/AttemptExamPage";
-import StudentResults from "./components/Auth/StudentResults";
+import AttemptExam from "./components/Student-ui/AttemptExam";
+import ExamInstructions from "./components/Student-ui/ExamInstructions";
+import AttemptExamPage from "./components/Student-ui/AttemptExamPage";
+
+import StudentResults from "./components/Teacher-ui/StudentResults";
 
 function App() {
   return (
@@ -55,7 +56,6 @@ function App() {
         {/* STUDENT EXAM FLOW */}
         <Route path="/attempt-exams" element={<AttemptExam />} />
         <Route path="/exam-instructions/:examId" element={<ExamInstructions />} />
-        {/* <Route path="/exam-start/:examId" element={<ExamStartCountdown />} /> */}
         <Route path="/attempt-exam/:examId" element={<AttemptExamPage />} />
 
         {/* RESULTS */}

@@ -86,3 +86,55 @@
 .start-btn:active {
   transform: scale(0.98);
 }
+
+/* ===============================
+EXAM CODE SECTION
+=============================== */
+
+.exam-code-box{
+margin-bottom:25px;
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.exam-code-box label{
+font-size:14px;
+font-weight:600;
+color:#1f2937;
+}
+
+/* INPUT FIELD */
+
+.exam-code-box input{
+width:500px;
+padding:12px 14px;
+font-size:15px;
+border-radius:8px;
+border:1px solid #d1d5db;
+outline:none;
+background:#f9fafb;
+transition:all 0.25s ease;
+}
+
+/* INPUT FOCUS */
+
+.exam-code-box input:focus{
+border-color:#2563eb;
+background:#ffffff;
+box-shadow:0 0 0 3px rgba(37,99,235,0.15);
+}
+
+/* PLACEHOLDER */
+
+.exam-code-box input::placeholder{
+color:#9ca3af;
+font-size:14px;
+}
+
+/* OPTIONAL CODE HINT */
+
+.exam-code-hint{
+font-size:13px;
+color:#6b7280;
+}

@@ -94,7 +94,7 @@ setTimeLeft(prev => prev - 1);
 
 return ()=>clearInterval(timer);
 
-},[timeLeft,submitted]);
+},[timeLeft, submitted, submitExam]);
 
 /* 🚫 PREVENT REFRESH */
 
